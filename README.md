@@ -1,30 +1,40 @@
-# Selezioni online Stazione Zoologica Anton Dohrn
-<p align="center">
-  <a href="https://github.com/consiglionazionaledellericerche/cool-jconon-szn/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="Cool Jconon is released under the GNU AGPL v3 license." />
-  </a>
-  <a href="https://mvnrepository.com/artifact/it.cnr.si/cool-jconon-szn">
-    <img alt="Maven Central" src="https://img.shields.io/maven-central/v/it.cnr.si/cool-jconon-szn.svg?style=flat" alt="Current version on maven central.">
-  </a>
-</p>
+# Concorsi On-Line Stazione Zoologica Anton Dohrn
 
-## Run
+## Requisiti
 
-#### Prerequisites Docker and docker-compose
-```
+Per l'avvio in locale occorre una istanza di [Alfresco Community Edition](https://www.alfresco.com/thank-you/thank-you-downloading-alfresco-community-edition) attiva sulla porta 9080, la versione minima è la 5.0.1 Community.  
+
+Successivamente applicare i seguenti amps:
+- https://repo.maven.apache.org/maven2/it/cnr/si/alfresco/groups-extension/2.22/groups-extension-2.22.amp
+- https://repo.maven.apache.org/maven2/it/cnr/si/alfresco/zip-content/2.22/zip-content-2.22.amp
+- https://repo.maven.apache.org/maven2/it/cnr/si/alfresco/cnr-extension-content-model/2.22/cnr-extension-content-model-2.22.amp
+
+**Per una corretta inizializzazione delle risorse installare Alfresco localizzato in Inglese**
+
+### Docker Alfresco
+In alternativa si può rendere disponibile Alfresco tramite [docker-compose](docker-compose/docker-compose.yml)   
+```bash
 git clone https://github.com/consiglionazionaledellericerche/cool-jconon-szn.git
-cd docker-compose
-docker-compose up -d;docker-compose logs -f
-```
-### Normally after 120 seconds the application responds
-
-* [Jconon SZN](http://localhost/)
-* [Alfresco](http://localhost/alfresco)
-* [Solr](http://localhost/solr4)
-
-### Build local
-```
-mvn clean spring-boot:run -Dspring.profiles.active=szn -Drepository.base.url=http://localhost:9080/alfresco/
+cd cool-jconon-szn/docker-compose
+docker-compose up -d
 ```
 
-<http://localhost:8080/>
+## Compilazione e Primo Avvio
+
+```bash
+git clone https://github.com/consiglionazionaledellericerche/cool-jconon-szn.git
+cd cool-jconon-szn
+mvn clean install -Pprod
+java -jar target/selezioni-szn.war --user.admin.password=admin --server.servlet.context-path=/ --repository.base.url=http://localhost:9080/alfresco/ --spring.profiles.active=dev --spid.enable=true --spid.issuer.entityid=https://miauri.it --spid.destination=http://localhost:8080/spid/send-response
+```
+
+## Avvio locale
+
+```bash
+git clone https://github.com/consiglionazionaledellericerche/cool-jconon-szn.git
+cd cool-jconon-szn
+mvn clean spring-boot:run -Pprod -Dspring.profiles.active=dev -Dserver.servlet.context-path=/ -Duser.admin.password=admin -Drepository.base.url=http://localhost:9080/alfresco/
+```
+
+L'applicazionre sarà attiva alla seguente URL: <http://localhost:8080>
+

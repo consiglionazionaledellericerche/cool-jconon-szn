@@ -20,23 +20,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>archetype</artifactId>
-        <groupId>it.cnr.si</groupId>
-        <version>1.0.13</version>
+        <groupId>it.cnr.si.cool.jconon</groupId>
+        <artifactId>cool-jconon-parent</artifactId>
+        <version>4.4.15</version>
     </parent>
 
     <artifactId>cool-jconon-szn</artifactId>
-    <version>0.0.11-SNAPSHOT</version>
-    <name>Concorsi On-Line Stazione Zoologica Anton Dohrn</name>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Concorsi On-Line SZN</name>
 
     <properties>
-        <cool-jconon.version>4.2.47</cool-jconon.version>
-        <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
         <cool.mode>development</cool.mode>
         <start-class>it.cnr.si.cool.jconon.CoolJcononApplication</start-class>
-        <junit.version>4.12</junit.version>
-        <spring.version>4.3.3.RELEASE</spring.version>
-        <mail.version>1.6.2</mail.version>
+        <hazelcast.version>3.7.2</hazelcast.version>
     </properties>
 
     <packaging>war</packaging>
@@ -45,34 +41,17 @@
         <dependency>
             <groupId>it.cnr.si.cool.jconon</groupId>
             <artifactId>cool-jconon-webapp-resources</artifactId>
-            <version>${cool-jconon.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.mail</groupId>
-                    <artifactId>mail</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-spring</artifactId>
+            <version>${hazelcast.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>${mail.version}</version>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>${hazelcast.version}</version>
         </dependency>
     </dependencies>
 
@@ -110,37 +89,12 @@
                 </resources>
                 <plugins>
                     <plugin>
-                        <groupId>com.github.bringking</groupId>
-                        <artifactId>requirejs-maven-plugin</artifactId>
-                        <version>2.0.4</version>
-                        <executions>
-                            <execution>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>optimize</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <configFile>
-                                ${basedir}/src/main/config/buildconfig.js
-                            </configFile>
-                            <filterConfig>
-                                true
-                            </filterConfig>
-                            <skip>
-                                false
-                            </skip>
-                        </configuration>
-                    </plugin>
-                    <plugin>
                         <groupId>net.alchim31.maven</groupId>
                         <artifactId>yuicompressor-maven-plugin</artifactId>
                         <configuration>
                             <nocompress>false</nocompress>
                         </configuration>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
@@ -157,39 +111,22 @@
                                         <artifactItem>
                                             <groupId>it.cnr.si.cool.jconon</groupId>
                                             <artifactId>cool-jconon-webapp-resources</artifactId>
-                                            <version>${cool-jconon.version}</version>
+                                            <version>${project.parent.version}</version>
                                             <outputDirectory>${project.build.directory}/javascript-exploded
                                             </outputDirectory>
                                             <includes>**/*.js</includes>
                                         </artifactItem>
+                                        <artifactItem>
+                                            <groupId>it.cnr.si.cool</groupId>
+                                            <artifactId>cool-common-web</artifactId>
+                                            <version>${cool.shared.version}</version>
+                                            <outputDirectory>${project.build.directory}/javascript-exploded
+                                            </outputDirectory>
+                                            <includes>**/*.js</includes>
+                                            <excludes>**/remote/**,**/surf/**</excludes>
+                                        </artifactItem>
                                     </artifactItems>
                                 </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -232,10 +169,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.3</version>
                 <configuration>
                     <warName>selezioni-szn</warName>
                     <!-- exclude direct copy of resources from src when using yuicompressor, see parent POM configuration -->
@@ -263,6 +202,7 @@
                     <includes>
                         <include>cool/cool.less</include>
                         <include>style.less</include>
+                        <include>custom.less</include>
                     </includes>
                     <outputDirectory>${project.build.directory}/classes/META-INF/css</outputDirectory>
                     <nodeExecutable>${node.path}</nodeExecutable>
@@ -280,23 +220,10 @@
         </plugins>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <scm>
-        <connection>scm:git:git@git.si.cnr.it:documentale/cool-jconon-szn.git</connection>
-        <developerConnection>scm:git:git@git.si.cnr.it:documentale/cool-jconon-szn.git</developerConnection>
-        <url>http://git.si.cnr.it/documentale/cool-jconon-szn</url>
+        <connection>scm:git:git@github.com:consiglionazionaledellericerche/cool-jconon-szn.git</connection>
+        <developerConnection>scm:git:git@github.com:consiglionazionaledellericerche/cool-jconon-szn.git</developerConnection>
+        <url>https://github.com/consiglionazionaledellericerche/cool-jconon-szn</url>
         <tag>HEAD</tag>
     </scm>
 
